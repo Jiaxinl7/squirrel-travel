@@ -37,15 +37,15 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="my-nav">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/index/">index</a></li>
+            <li class="active"><a href="/users/index">index</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
               {% if request.session.is_login %}
                   <li><a href="#">Currently online:{{ request.session.user_name }}</a></li>
-                  <li><a href="/logout/">logout</a></li>
+                  <li><a href="/users/logout/">logout</a></li>
               {% else %}
-                  <li><a href="/login/">login</a></li>
-                  <li><a href="/register/">register</a></li>
+                  <li><a href="/users/login/">login</a></li>
+                  <li><a href="/users/register/">register</a></li>
               {% endif %}
           </ul>
         </div><!-- /.navbar-collapse -->

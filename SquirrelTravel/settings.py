@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'manager.apps.ManagerConfig',
     'timeline.apps.TimelineConfig',
-    'user.apps.UserConfig',
     'community.apps.CommunityConfig',
 ]
 
@@ -132,3 +131,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+
+SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']

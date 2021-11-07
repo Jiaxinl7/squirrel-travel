@@ -25,5 +25,5 @@ urlpatterns = [
     path('timeline/', include('timeline.urls')),
     path('manager/', include('manager.urls')),
     path('admin/', admin.site.urls),
-    path('users/', include(user.urls)),
+    path('users/', include('user.urls')),
 ]

@@ -70,7 +70,7 @@ def register(request):
                 new_user.email = email
                 # new_user.sex = sex
                 new_user.save()
-                return redirect('/login/')  # 自动跳转到登录页面
+                return redirect('users/login/')  # 自动跳转到登录页面
     register_form = RegisterForm()
     return render(request, 'user/register.html', locals())
 
