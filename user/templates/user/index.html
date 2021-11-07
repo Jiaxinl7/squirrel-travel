@@ -1,0 +1,10 @@
+
+{% extends 'base.html' %}
+{% block title %}index{% endblock %}
+{% block content %}
+    {% if request.session.is_login %}
+    <h1>Hi,{{ request.session.user_name }}Welcome back</h1>
+    {% else %}
+    <h1>You are not logged in, you can only access public content!</h1>
+    {% endif %}
+{% endblock %}
