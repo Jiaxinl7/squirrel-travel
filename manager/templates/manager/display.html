@@ -11,27 +11,15 @@
     <title>Results</title>
   </head>
   <body>
-    <nav class="navbar fixed-top navbar-dark bg-dark shadow-sm">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">
-            {% load static %}
-            <img src="{% static 'manager/logo.png' %}" alt="logo" height="24" class="d-inline-block align-text-top">
-            <strong>Squirrle Travel</strong>
-          </a>
-          <h1>Hello, world!</h1>
-          <div class="d-flex">
-            <button class="btn btn-sm btn-outline-secondary me-2" type="button">Sign Up</button>
-            <button class="btn btn-sm btn-outline-secondary" type="button">Login In</button>
-          </div>
-        </div>
-      </nav>
+    {% include 'manager/navbar.html' %}
       
     <div class="container" style="padding-top: 70px;">
       <div class="row">
         <div class="col-6">
-            <ul class="list-group">
+            <ul class="list-group">        
+            Restaurant & Service
             {% for result in restaurant %}
-                <a href="#" class="list-group-item list-group-item-action">
+                <a href="/manager/" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{result.r_name}}</h5>
                     </div>
@@ -43,13 +31,16 @@
         </div>    
         <div class="col-6">
             <ul class="list-group">
+ 
+                    Place To Visit
+
             {% for result in place %}
-                <a href="#" class="list-group-item list-group-item-action">
+                <a href="place/{{result.pid}}/" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{result.p_name}}</h5>
                     </div>
                     <small class="text-muted">Location: {{result.location}}</small>
-                    <p class="mb-1">Events held there</p>
+                    <p class="mb-1">id: {{result.pid}}</p>
                 </a>
             {% endfor %}
             </ul>

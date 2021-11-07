@@ -2,7 +2,8 @@ from django.db import models
 
 # Create your models here.
 class Visit(models.Model):
-    vid = models.IntegerField(primary_key=True)
+    # vid = models.IntegerField(primary_key=True)
+    vid = models.AutoField(primary_key=True)
     date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
@@ -18,7 +19,8 @@ class Visit(models.Model):
         db_table = 'visit'
 
 class Dine(models.Model):
-    did = models.IntegerField(primary_key=True)
+    # did = models.IntegerField(primary_key=True)
+    did = models.AutoField(primary_key=True)
     date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
