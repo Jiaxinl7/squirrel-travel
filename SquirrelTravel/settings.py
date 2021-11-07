@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -39,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'manager.apps.ManagerConfig',
+    'timeline.apps.TimelineConfig',
+    'user.apps.UserConfig',
+    'community.apps.CommunityConfig',
 ]
 
 MIDDLEWARE = [
@@ -78,11 +81,11 @@ WSGI_APPLICATION = 'SquirrelTravel.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': '411_local',
-        'USER': 'root',  # 数据库用户名
-        'PASSWORD': '123456',  # 数据库密码
-        'HOST': '127.0.0.1',  #MySQL服务所在主机IP
-        'PORT': '3306',  # MySQL服务端口
+        'NAME': 'cs411db',
+        'USER': 'root',
+        'PASSWORD': 'cs411',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 

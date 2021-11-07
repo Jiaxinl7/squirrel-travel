@@ -1,0 +1,25 @@
+<nav class="navbar fixed-top navbar-dark bg-dark shadow-sm">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">
+        {% load static %}
+        <img src="{% static 'manager/logo.png' %}" alt="logo" height="24" class="d-inline-block align-text-top">
+        <strong>Squirrle Travel</strong>
+      </a>
+      <div class="d-flex">
+        {% if request.session.user_id %}
+        <div class="dropdown">
+            <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                Welcome, {{ request.session.user_id }}
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+              <li><button class="dropdown-item" href="#">My Plan</button></li>
+              <li><button class="dropdown-item" href="#">Log Out</button></li>
+            </ul>
+        </div>
+        {% else %}
+        <button class="btn btn-sm btn-outline-secondary me-2" type="button">Sign Up</button>
+        <button class="btn btn-sm btn-outline-secondary" type="button">Login In</button>
+        {% endif %}
+    </div>
+  </div>
+</nav>

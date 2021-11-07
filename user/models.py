@@ -7,7 +7,6 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
 class User(models.Model):
     uid = models.AutoField(primary_key=True)
     u_name = models.CharField(max_length=45, blank=True, null=True)
