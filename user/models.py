@@ -15,7 +15,7 @@ class User(models.Model):
     user_type = models.CharField(max_length=45, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'User'
 
 
