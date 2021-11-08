@@ -23,9 +23,10 @@ def login(request):
                 user = User.objects.get(u_name=username)
                 if user.password == password:
                     request.session['is_login'] = True
-                    request.session['user_id'] = user.id
-                    request.session['user_name'] = user.name
+                    request.session['user_id'] = user.uid
+                    request.session['user_name'] = user.u_name
                     return redirect('/users/index/')
+
                 else:
                     message = "Wrong password!"
             except:
@@ -42,7 +43,7 @@ def register(request):
         return redirect("/users/index/")
     if request.method == "POST":
         register_form = RegisterForm(request.POST)
-        message = "请检查填写的内容！"
+        message = "Pleace check your input!"
         if register_form.is_valid():  # 获取数据
             username = register_form.cleaned_data['username']
             password1 = register_form.cleaned_data['password1']

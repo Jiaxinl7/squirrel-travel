@@ -6,19 +6,19 @@
         <strong>Squirrle Travel</strong>
       </a>
       <div class="d-flex">
-        {% if request.session.user_id %}
+        {% if request.session.is_login %}
         <div class="dropdown">
             <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                Welcome, {{ request.session.user_id }}
+                Welcome, {{ request.session.user_name }}
             </button>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-              <li><button class="dropdown-item" href="#">My Plan</button></li>
-              <li><button class="dropdown-item" href="#">Log Out</button></li>
-            </ul>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item" href="#">My Plan</a>
+              <a class="dropdown-item" href="/users/logout/">Log Out</a>
+            </div>
         </div>
         {% else %}
-        <button class="btn btn-sm btn-outline-secondary me-2" type="button">Sign Up</button>
-        <button class="btn btn-sm btn-outline-secondary" type="button">Login In</button>
+        <a class="btn btn-sm btn-outline-secondary me-2" type="button" href="/users/register">Sign Up</a>
+        <a class="btn btn-sm btn-outline-secondary" type="button" href="/users/login">Login In</a>
         {% endif %}
     </div>
   </div>

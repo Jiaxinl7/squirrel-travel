@@ -13,24 +13,28 @@
   </head>
   <body>
     {% include 'manager/navbar.html' %}
-      
-    <div class="container" style="padding-top: 70px;">
+    <div style="padding-top: 70px;" ></div>
+    <!-- <span class="badge-danger">Danger</span> -->
+    <div class="container">
       <div class="row">
         <div class="col-md-4">
             <div class="main-card mb-3 card">
                 <div class="card-body">
-                    <h5 class="card-title">User Timeline</h5>
+                    <h5 class="card-title">Plan for {{date}}</h5>
                     <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                        
+                      {% for s, e, title, loc in destination %}
+                      
                       <div class="vertical-timeline-item vertical-timeline-element">
-                            <div> <span class="vertical-timeline-element-icon bounce-in"> <i class="badge badge-dot badge-dot-xl badge-success"></i> </span>
-                                <div class="vertical-timeline-element-content bounce-in">
-                                    <h4 class="timeline-title">Meeting with client</h4>
-                                    <p>Meeting with USA Client, today at <a href="javascript:void(0);" data-abc="true">12:00 PM</a></p> <span class="vertical-timeline-element-date">9:30 AM</span>
-                                </div>
+                        <div> <span class="vertical-timeline-element-icon bounce-in"> 
+                          <i class="badge badge-warning badge-dot badge-dot-xl "> </i> </span>
+                            <div class="vertical-timeline-element-content bounce-in">
+                              <h4 class="timeline-title">{{title}}</h4>
+                              <p>{{loc}}</p>               
+                                <span class="vertical-timeline-element-date">{{s}}<br>To {{e}}</span>
                             </div>
-                      </div>
-
+                        </div>
+                    </div>
+                      {% endfor %}
                       
                   </div>
                 </div>
@@ -42,7 +46,7 @@
             <ul class="list-group">        
             Restaurant & Service
             {% for result in restaurant %}
-                <a href="/manager/" class="list-group-item list-group-item-action">
+                <a href="restaurant/{{result.id}}" class="list-group-item list-group-item-action">
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{result.r_name}}</h5>
                     </div>
@@ -63,7 +67,7 @@
                         <h5 class="mb-1">{{result.p_name}}</h5>
                     </div>
                     <small class="text-muted">Location: {{result.location}}</small>
-                    <p class="mb-1">id: {{result.pid}}</p>
+                    <!-- <p class="mb-1">id: {{result.pid}}</p> -->
                 </a>
             {% endfor %}
             </ul>

@@ -1,41 +1,71 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import City, Place, NRestaurant, Event
-from timeline.models import Visit
+from timeline.models import Visit, Dine
+from user.models import User
 from django.db import models
 
 
 def index(request):
     # return HttpResponse("Here is the manager page.")
     print('index page:')
+    request.session['is_login'] = True
+    request.session['user_id'] = 2
+    request.session['user_name'] = 'aaa'
     return render(request, 'manager/index.html')
 
 def search(request):
-    print('search page:')
-    print(request.GET['date'])
-    print(request.GET['city'])
+    print('search page:',request.GET['city'])
+    date = request.GET['date']
     cid = City.objects.get(c_name = request.GET['city'])
     place = Place.objects.filter(cid = cid).order_by('p_name')
     restaurant = NRestaurant.objects.filter(cid = cid).order_by('r_name')
+    # visit = Visit.objects.filter(date = date).order_by('start_time')
+    # dine = Dine.objects.filter(date = date).order_by('start_time')
+    visit = Visit.objects.select_related('pid').filter(date=date)
+    visit = [[v.start_time, v.end_time, v.pid.p_name, v.pid.location] for v in visit]
+    dine = Dine.objects.select_related('rid').filter(date=date)
+    dine = [[d.start_time, d.end_time, d.rid.r_name, d.rid.r_address] for d in dine]
+    destination = sorted(visit + dine)
+    print(destination)
 
     print('cid', cid)
     print('num of place:', len(place))
     print('num of restaurant:', len(restaurant))
-    print('session:', list(request.session.keys()))
+    # print('num of visit:', len(visit))
+    # print('num of dine:', len(dine))
+
     # request.session['user_id'] = 1
-    return render(request, 'manager/display.html', {'place': place, 'restaurant': restaurant})
+    return render(request, 'manager/display.html', {'date': date, 'place': place, 'restaurant': restaurant, 'destination': destination})
 
 def place(request, pid):
     print('place page:')
     place = Place.objects.get(pid = pid)
     events = Event.objects.filter(pid = pid).order_by('start_date')
     print(place.p_name,' event:', len(events))
+    # create visit
     if request.method == 'POST':
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
-
-        visit_instance = Visit.objects.create(uid = request.session['user_id'], pid = place.pid, date = date, start_time = start_time, end_time = end_time)
+        user = User.objects.get(uid = request.session['user_id'])
+        visit_instance = Visit.objects.create(uid = user, pid = place, date = date, start_time = start_time, end_time = end_time)
         return render(request, 'manager/place.html', 
         {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time})
+    # display place
     return render(request, 'manager/place.html', {'place': place, 'events': events})
+
+def restaurant(request, rid):
+    print('restaurant page:')
+    restaurant = NRestaurant.objects.get(id = rid)
+    # create dine
+    if request.method == 'POST':
+        date = request.POST['date']
+        start_time = request.POST['start_time']
+        end_time = request.POST['end_time']
+        user = User.objects.get(uid = request.session['user_id'])
+        Dine_instance = Dine.objects.create(uid = user, rid = restaurant, date = date, start_time = start_time, end_time = end_time)
+        return render(request, 'manager/restaurant.html', 
+        {'restaurant': restaurant, 'date': date, 'start_time': start_time, 'end_time': end_time})
+    # display restaurant
+    return render(request, 'manager/restaurant.html', {'restaurant': restaurant})
