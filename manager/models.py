@@ -15,27 +15,27 @@ class City(models.Model):
     cid = models.IntegerField(primary_key=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'city'
 
 
 class Event(models.Model):
-    eid = models.IntegerField(primary_key=True)
+    eid = models.AutoField(primary_key=True)
     title = models.CharField(max_length=255, blank=True, null=True)
     start_date = models.DateField(blank=True, null=True)
     pid = models.ForeignKey('Place', models.DO_NOTHING, db_column='pid', blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'event'
 
 
 class Manage(models.Model):
-    uid = models.OneToOneField('User', models.DO_NOTHING, db_column='uid', primary_key=True)
+    uid = models.OneToOneField('user.User', models.DO_NOTHING, db_column='uid', primary_key=True)
     pid = models.ForeignKey('Place', models.DO_NOTHING, db_column='pid')
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'manage'
         unique_together = (('uid', 'pid'),)
 
@@ -56,7 +56,7 @@ class NRestaurant(models.Model):
     state = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'n_restaurant'
 
 
@@ -67,5 +67,5 @@ class Place(models.Model):
     cid = models.ForeignKey(City, models.DO_NOTHING, db_column='cid', blank=True, null=True)
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'place'

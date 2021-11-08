@@ -9,7 +9,7 @@ from django.db import models
 
 
 class Visit(models.Model):
-    vid = models.IntegerField(primary_key=True)
+    vid = models.AutoField(primary_key=True)
     date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
@@ -18,16 +18,16 @@ class Visit(models.Model):
     review = models.CharField(max_length=255, blank=True, null=True)
     public = models.IntegerField(blank=True, null=True)
     v_rate = models.FloatField(blank=True, null=True)
-    uid = models.ForeignKey('User', models.DO_NOTHING, db_column='uid')
-    pid = models.ForeignKey('Place', models.DO_NOTHING, db_column='pid')
+    uid = models.ForeignKey('user.User', models.DO_NOTHING, db_column='uid')
+    pid = models.ForeignKey('manager.Place', models.DO_NOTHING, db_column='pid')
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'visit'
 
 
 class Dine(models.Model):
-    did = models.IntegerField(primary_key=True)
+    did = models.AutoField(primary_key=True)
     date = models.DateField(blank=True, null=True)
     start_time = models.TimeField(blank=True, null=True)
     end_time = models.TimeField(blank=True, null=True)
@@ -36,9 +36,9 @@ class Dine(models.Model):
     public = models.IntegerField(blank=True, null=True)
     orders = models.CharField(max_length=255, blank=True, null=True)
     d_rate = models.FloatField(blank=True, null=True)
-    rid = models.ForeignKey('NRestaurant', models.DO_NOTHING, db_column='rid')
-    uid = models.ForeignKey('User', models.DO_NOTHING, db_column='uid')
+    rid = models.ForeignKey('manager.NRestaurant', models.DO_NOTHING, db_column='rid')
+    uid = models.ForeignKey('user.User', models.DO_NOTHING, db_column='uid')
 
     class Meta:
-        managed = False
+        # managed = False
         db_table = 'dine'
