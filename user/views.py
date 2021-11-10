@@ -2,6 +2,7 @@
 from django.shortcuts import render, redirect
 from .models import User
 from .forms import UserForm, RegisterForm
+from django.db import connection
 
 
 def index(request):
@@ -20,7 +21,7 @@ def login(request):
             username = login_form.cleaned_data['username']
             password = login_form.cleaned_data['password']
             try:
-                user = User.objects.get(u_name=username)
+                user = User.objects.raw('SELECT * FROM user WHERE u_name=%s',[username])[0]
                 if user.password == password:
                     request.session['is_login'] = True
                     request.session['user_id'] = user.uid
@@ -54,23 +55,26 @@ def register(request):
                 message = "The two passwords entered are different!"
                 return render(request, 'user/register.html', locals())
             else:
-                same_name_user = User.objects.filter(u_name=username)
+                same_name_user = User.objects.raw('SELECT * FROM user WHERE u_name=%s',[username])
                 if same_name_user:  # 用户名唯一
                     message = 'The user already exists, please select a user name again!'
                     return render(request, 'user/register.html', locals())
-                same_email_user = User.objects.filter(email=email)
+                same_email_user = User.objects.raw('SELECT * FROM user WHERE email=%s',[email])
                 if same_email_user:  # 邮箱地址唯一
                     message = 'This email address has already been registered, please use another email address!'
                     return render(request, 'user/register.html', locals())
  
                 # 当一切都OK的情况下，创建新用户
- 
-                new_user = User.objects.create()
-                new_user.u_name = username
-                new_user.password = password1
-                new_user.email = email
-                # new_user.sex = sex
-                new_user.save()
+
+                with connection.cursor() as cursor:
+                    cursor.execute("INSERT INTO user(u_name, password, email) VALUES (%s,%s,%s)",[username, password1, email])
+
+                # new_user = User.objects.create()
+                # new_user.u_name = username
+                # new_user.password = password1
+                # new_user.email = email
+                # # new_user.sex = sex
+                # new_user.save()
                 return redirect('/users/login/')  # 自动跳转到登录页面
     register_form = RegisterForm()
     return render(request, 'user/register.html', locals())
