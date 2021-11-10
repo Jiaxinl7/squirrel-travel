@@ -5,7 +5,7 @@ from django.http import HttpResponse, request
 from .models import City, Place, NRestaurant, Event
 from timeline.models import Visit, Dine
 from user.models import User
-from django.db import models
+from django.db import models, connection
 from django.db.models.aggregates import Avg, Count
 from django.db.models import F, OuterRef, Subquery, Exists
 
@@ -63,14 +63,23 @@ def place(request, pid):
 
 def recommend(request):
     # Treasure restaurants you may not find yet
-    rec_list = NRestaurant.objects.values('categories').annotate(avgcount=Avg('review_count')).filter(review_count__lte=F('avgcount'),stars__gte=4).values('categories','r_name','r_address')[:15]
-    print(rec_list)
+    #rec_list = NRestaurant.objects.values('categories').annotate(avgcount=Avg('review_count')).filter(review_count__lte=F('avgcount'),stars__gte=4).values('categories','r_name','r_address')[:15]
+    
+    with connection.cursor() as cursor:
+         cursor.execute("SELECT r.r_name FROM n_restaurant r NATURAL JOIN (SELECT categories, avg(review_count) as count FROM n_restaurant GROUP BY categories) AS t WHERE r.stars >= 4 AND r.review_count <= t.count LIMIT 15")
+         rec_list = cursor.fetchall()
 
 
     # Cities that hold lots of events recently
-    queryset = Place.objects.select_related('event', 'city').values('cid').annotate(c=Count('event')).order_by('-c')[:15]
-    cnames = City.objects.filter(cid__in=[queryset[i]['cid'] for i in range(len(queryset))]).values('c_name')
+    # queryset = Place.objects.select_related('event', 'city').values('cid').annotate(c=Count('event')).order_by('-c')[:15]
+    # cnames = City.objects.filter(cid__in=[queryset[i]['cid'] for i in range(len(queryset))]).values('c_name')
+   
+    with connection.cursor() as acursor: 
+         acursor.execute("SELECT c.c_name FROM city c, (SELECT p.cid as cid, COUNT(e.eid) as amount FROM event e NATURAL JOIN place p GROUP BY p.cid ORDER BY amount DESC) as t WHERE c.cid=t.cid LIMIT 15")
+         cnames = acursor.fetchall()
+
     return render(request, 'manager/advancedquery.html', {'rec_list': rec_list, 'cnames': cnames})
+
 
 
 def restaurant(request, rid):
