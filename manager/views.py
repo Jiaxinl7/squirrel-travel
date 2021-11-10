@@ -1,37 +1,47 @@
-from typing import Coroutine
 from django.db.models.aggregates import Count
-from django.shortcuts import render, redirect
-from django.http import HttpResponse, request
+from django.shortcuts import render
 from .models import City, Place, NRestaurant, Event
 from timeline.models import Visit, Dine
 from user.models import User
-from django.db import models
+from django.db import connection
 from django.db.models.aggregates import Avg, Count
-from django.db.models import F, OuterRef, Subquery, Exists
 
 
 def index(request):
     # return HttpResponse("Here is the manager page.")
     print('index page:')
-    request.session['is_login'] = True
-    request.session['user_id'] = 2
-    request.session['user_name'] = 'aaa'
+    # request.session['is_login'] = True
+    # request.session['user_id'] = 2
+    # request.session['user_name'] = 'aaa'
     return render(request, 'manager/index.html')
 
 def search(request):
     print('search page:',request.GET['city'])
     date = request.GET['date']
-    cid = City.objects.get(c_name = request.GET['city'])
-    place = Place.objects.filter(cid = cid).order_by('p_name')
-    restaurant = NRestaurant.objects.filter(cid = cid).order_by('r_name')
-    # visit = Visit.objects.filter(date = date).order_by('start_time')
-    # dine = Dine.objects.filter(date = date).order_by('start_time')
-    visit = Visit.objects.select_related('pid').filter(date=date)
-    visit = [[v.start_time, v.end_time, v.pid.p_name, v.pid.location, v.vid, 1 ] for v in visit]
-    dine = Dine.objects.select_related('rid').filter(date=date)
-    dine = [[d.start_time, d.end_time, d.rid.r_name, d.rid.r_address, d.did, 0 ] for d in dine]
+    # cid = City.objects.get(c_name = request.GET['city'])
+    city = City.objects.raw('SELECT * FROM city WHERE c_name=%s',[request.GET['city']])[0]
+    cid = city.cid
+    # place = Place.objects.filter(cid = cid).order_by('p_name')
+    place = Place.objects.raw('SELECT * FROM Place WHERE cid = %s ORDER BY p_name', [cid])
+    # restaurant = NRestaurant.objects.filter(cid = cid).order_by('r_name')
+    restaurant = NRestaurant.objects.raw('SELECT * FROM n_restaurant WHERE cid = %s ORDER BY r_name', [cid])
+
+    # visit = Visit.objects.select_related('pid').filter(date=date)
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT start_time, end_time, p_name, location, vid FROM visit NATURAL JOIN place WHERE date = %s", [date])
+        visit = cursor.fetchall()
+    visit = [[v[0], v[1], v[2], v[3], v[4], 1] for v in visit]
+    print('len of visit:', len(visit))
+
+    # dine = Dine.objects.select_related('rid').filter(date=date)
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT start_time, end_time, r_name, r_address, rid FROM dine JOIN n_restaurant on dine.rid = n_restaurant.id WHERE date = %s", [date])
+        dine = cursor.fetchall()
+    dine = [[d[0], d[1], d[2], d[3], d[4], 0] for d in dine]
+    
+    print('len of dine:', len(dine))
     destination = sorted(visit + dine)
-    print(destination)
+    # print('destination', destination)
 
     print('cid', cid)
     print('num of place:', len(place))
@@ -44,16 +54,23 @@ def search(request):
 
 def place(request, pid):
     print('place page:')
-    place = Place.objects.get(pid = pid)
-    events = Event.objects.filter(pid = pid).order_by('start_date')
+    # place = Place.objects.get(pid = pid)
+    place = Place.objects.raw('SELECT * FROM place WHERE pid=%s',[pid])[0]
+    # events = Event.objects.filter(pid = pid).order_by('start_date')
+    events = Event.objects.raw('SELECT * FROM event WHERE pid=%s', [pid])
     print(place.p_name,' event:', len(events))
     # create visit
     if request.method == 'POST':
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
-        user = User.objects.get(uid = request.session['user_id'])
-        visit_instance = Visit.objects.create(uid = user, pid = place, date = date, start_time = start_time, end_time = end_time)
+        # user = User.objects.get(uid = request.session['user_id'])
+        user = User.objects.raw('SELECT * FROM user WHERE uid = %s', [request.session['user_id']])[0]
+
+        # visit_instance = Visit.objects.create(uid = user, pid = place, date = date, start_time = start_time, end_time = end_time)
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO Visit (uid, pid, date, start_time, end_time) VALUES (%s, %s, %s, %s, %s)", [user.uid ,place.pid, date, start_time, end_time])
+  
         return render(request, 'manager/place.html',
         {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time})
 
@@ -75,14 +92,19 @@ def recommend(request):
 
 def restaurant(request, rid):
     print('restaurant page:')
-    restaurant = NRestaurant.objects.get(id = rid)
+    # restaurant = NRestaurant.objects.get(id = rid)
+    restaurant = NRestaurant.objects.raw('SELECT * FROM n_restaurant WHERE id = %s', [rid])[0]
     # create dine
     if request.method == 'POST':
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
-        user = User.objects.get(uid = request.session['user_id'])
-        Dine_instance = Dine.objects.create(uid = user, rid = restaurant, date = date, start_time = start_time, end_time = end_time)
+        # user = User.objects.get(uid = request.session['user_id'])
+        user = User.objects.raw('SELECT * FROM user WHERE uid = %s', [request.session['user_id']])[0]
+        # Dine_instance = Dine.objects.create(uid = user, rid = restaurant, date = date, start_time = start_time, end_time = end_time)
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO Dine (uid, rid, date, start_time, end_time) VALUES (%s, %s, %s, %s, %s)", [user.uid, restaurant.id, date, start_time, end_time])
+  
         return render(request, 'manager/restaurant.html', 
         {'restaurant': restaurant, 'date': date, 'start_time': start_time, 'end_time': end_time})
     # display restaurant
