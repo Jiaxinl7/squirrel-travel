@@ -8,6 +8,8 @@ from user.models import User
 from django.db import models, connection
 from django.db.models.aggregates import Avg, Count
 from django.db.models import F, OuterRef, Subquery, Exists
+from django.db import connection
+
 
 
 def index(request):
@@ -100,7 +102,10 @@ def restaurant(request, rid):
 def delete_visit(request, vid):
     # print(request)
 
-    Visit.objects.filter(vid=vid).delete()
+    #Visit.objects.filter(vid=vid).delete()
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM visit WHERE vid=%s", [vid])
+        #cursor.fetchall()
     return render(request, 'manager/index.html')
 
 def edit_visit(request,vid):
@@ -109,15 +114,20 @@ def edit_visit(request,vid):
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
-        user = User.objects.get(uid = request.session['user_id'])
-        Visit.objects.filter(vid=vid).update( date = date, start_time = start_time, end_time = end_time)
+        #user = User.objects.get(uid = request.session['user_id'])
+        #Visit.objects.filter(vid=vid).update( date = date, start_time = start_time, end_time = end_time)
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE visit SET date = %s , start_time=%s , end_time=%s WHERE vid = %s", [date, start_time, end_time, vid])
+            cursor.fetchone()
         return render(request, 'manager/index.html')
     return render(request, 'manager/edit_visit.html')
 
 def delete_dine(request, did):
     # print(request)
 
-    Dine.objects.filter(did=did).delete()
+    #Dine.objects.filter(did=did).delete()
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM dine WHERE did=%s", [did])
 
     return render(request, 'manager/index.html')
 
@@ -127,7 +137,9 @@ def edit_dine(request,did):
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
-        user = User.objects.get(uid = request.session['user_id'])
-        Dine.objects.filter(did=did).update( date = date, start_time = start_time, end_time = end_time)
+        # Dine.objects.filter(did=did).update( date = date, start_time = start_time, end_time = end_time)
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE dine SET date = %s , start_time=%s , end_time=%s WHERE did = %s", [date, start_time, end_time, did])
+            cursor.fetchone()
         return render(request, 'manager/index.html')
     return render(request, 'manager/edit_dine.html')
