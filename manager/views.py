@@ -1,9 +1,13 @@
+from typing import Coroutine
+from django.db.models.aggregates import Count
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, request
 from .models import City, Place, NRestaurant, Event
 from timeline.models import Visit, Dine
 from user.models import User
 from django.db import models
+from django.db.models.aggregates import Avg, Count
+from django.db.models import F, OuterRef, Subquery, Exists
 
 
 def index(request):
@@ -52,8 +56,22 @@ def place(request, pid):
         visit_instance = Visit.objects.create(uid = user, pid = place, date = date, start_time = start_time, end_time = end_time)
         return render(request, 'manager/place.html', 
         {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time})
-    # display place
+
     return render(request, 'manager/place.html', {'place': place, 'events': events})
+
+
+
+def recommend(request):
+    # Treasure restaurants you may not find yet
+    rec_list = NRestaurant.objects.values('categories').annotate(avgcount=Avg('review_count')).filter(review_count__lte=F('avgcount'),stars__gte=4).values('categories','r_name','r_address')[:15]
+    print(rec_list)
+
+
+    # Cities that hold lots of events recently
+    queryset = Place.objects.select_related('event', 'city').values('cid').annotate(c=Count('event')).order_by('-c')[:15]
+    cnames = City.objects.filter(cid__in=[queryset[i]['cid'] for i in range(len(queryset))]).values('c_name')
+    return render(request, 'manager/advancedquery.html', {'rec_list': rec_list, 'cnames': cnames})
+
 
 def restaurant(request, rid):
     print('restaurant page:')
