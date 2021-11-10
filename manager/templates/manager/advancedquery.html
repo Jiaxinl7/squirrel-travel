@@ -31,7 +31,7 @@
 
           {% for c in cnames %}
           <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ forloop.counter }}. {{ c.c_name }}</h5>
+              <h5 class="mb-1">{{ forloop.counter }}. {{ c}}</h5>
           </div>
           <small class="text-muted">This is the top {{ forloop.counter }} city that holds lots of events.</small>
   {% endfor %}
@@ -47,9 +47,8 @@
           <p>Squirrel has collected some places that are highly rated restaurant but not too many people flock to...</br>Deserve a try!</p>
             {% for rec in rec_list %}
           <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1">{{ forloop.counter }}. {{ rec.r_name }}</h5>
+              <h5 class="mb-1">{{ forloop.counter }}. {{ rec }}</h5>
           </div>
-          <small class="text-muted">It located at {{ rec.r_address }}</small>
           <br>
   {% endfor %}
   </ul>
