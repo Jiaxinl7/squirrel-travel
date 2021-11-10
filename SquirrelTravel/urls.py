@@ -22,6 +22,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
+    path('community/', include('community.urls')),
     path('timeline/', include('timeline.urls')),
     path('manager/', include('manager.urls')),
     path('admin/', admin.site.urls),

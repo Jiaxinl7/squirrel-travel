@@ -22,8 +22,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Plan for {{date}}</h5>
                     <div class="vertical-timeline vertical-timeline--animate vertical-timeline--one-column">
-                      {% for s, e, title, loc in destination %}
-                      
+                      {% for  s, e, title, loc, id, type in destination %}
                       <div class="vertical-timeline-item vertical-timeline-element">
                         <div> <span class="vertical-timeline-element-icon bounce-in"> 
                           <i class="badge badge-warning badge-dot badge-dot-xl "> </i> </span>
@@ -31,11 +30,12 @@
                               <h4 class="timeline-title">{{title}}</h4>
                               <p>{{loc}}</p>               
                                 <span class="vertical-timeline-element-date">{{s}}<br>To {{e}}</span>
+                                <a href="edit_visit/{{id}}" class="btn btn-primary" role="button">Edit</a>
+                                <a href="delete_visit/{{id}}" class="btn btn-danger" role="button">X</a>
                             </div>
                         </div>
                     </div>
                       {% endfor %}
-                      
                   </div>
                 </div>
           </div>

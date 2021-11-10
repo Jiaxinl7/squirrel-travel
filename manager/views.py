@@ -23,9 +23,9 @@ def search(request):
     # visit = Visit.objects.filter(date = date).order_by('start_time')
     # dine = Dine.objects.filter(date = date).order_by('start_time')
     visit = Visit.objects.select_related('pid').filter(date=date)
-    visit = [[v.start_time, v.end_time, v.pid.p_name, v.pid.location] for v in visit]
+    visit = [[v.start_time, v.end_time, v.pid.p_name, v.pid.location, v.vid, 'v'] for v in visit]
     dine = Dine.objects.select_related('rid').filter(date=date)
-    dine = [[d.start_time, d.end_time, d.rid.r_name, d.rid.r_address] for d in dine]
+    dine = [[d.start_time, d.end_time, d.rid.r_name, d.rid.r_address, d.did, 'd'] for d in dine]
     destination = sorted(visit + dine)
     print(destination)
 
@@ -69,3 +69,39 @@ def restaurant(request, rid):
         {'restaurant': restaurant, 'date': date, 'start_time': start_time, 'end_time': end_time})
     # display restaurant
     return render(request, 'manager/restaurant.html', {'restaurant': restaurant})
+
+def delete_visit(request, vid):
+    # print(request)
+
+    Visit.objects.filter(vid=vid).delete()
+
+    return render(request, 'manager/index.html')
+
+def edit_visit(request,vid):
+    visit = Visit.objects.filter(vid=vid).first()
+    if request.method == 'POST':
+        date = request.POST['date']
+        start_time = request.POST['start_time']
+        end_time = request.POST['end_time']
+        user = User.objects.get(uid = request.session['user_id'])
+        Visit.objects.filter(vid=vid).update( date = date, start_time = start_time, end_time = end_time)
+        return render(request, 'manager/index.html')
+    return render(request, 'manager/edit_visit.html')
+
+def delete_dine(request, did):
+    # print(request)
+
+    Dine.objects.filter(did=did).delete()
+
+    return render(request, 'manager/index.html')
+
+def edit_dine(request,did):
+    dine = Dine.objects.filter(did=did).first()
+    if request.method == 'POST':
+        date = request.POST['date']
+        start_time = request.POST['start_time']
+        end_time = request.POST['end_time']
+        user = User.objects.get(uid = request.session['user_id'])
+        Dine.objects.filter(did=did).update( date = date, start_time = start_time, end_time = end_time)
+        return render(request, 'manager/index.html')
+    return render(request, 'manager/edit_dine.html')

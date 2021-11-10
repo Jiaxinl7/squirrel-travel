@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    <title>{{restaurant.r_name}}</title>
+  </head>
+  <body>
+    {% include 'manager/navbar.html' %}
+
+    <div class="container" style="padding-top: 70px;">
+
+      <div class="row">
+        <div class="col-6">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{restaurant.r_name}}</h5>
+            </div>
+            <small class="text-muted">Location: {{restaurant.r_address}}</small>
+            <p>Categories: {{restaurant.categories}}</p>
+            <p>Star: {{restaurant.stars}}</p>
+            <p>Review Count: {{restaurant.review_count}}</p>
+            <p>Opening Hours: {{restaurant.hours}}</p>
+
+
+            {% if date %}
+            <p>You justed added:</p>
+            <p>Date: {{date}}</p>
+            <p>Start time: {{start_time}}</p>
+            <p>End time: {{end_time}}</p>
+
+            {% endif %}
+            <div class="input-group">
+                <form action='#' method="POST">
+                    {% csrf_token %}
+                    <label for="date">Choose a date for your trip:</label>
+                    <input type="date" name="date" class="form-control"/>
+                    <label for="start_time">Start time:</label>
+                    <input type="time" name="start_time" class="form-control"/>
+                    <label for="end_time">End time:</label>
+                    <input type="time" name="end_time" class="form-control"/>
+
+                    <button class="btn btn-warning" type="submit">Edit</button>
+
+                </form>
+            </div>
+
+
+        </div>
+
+
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </body>
+</html>
