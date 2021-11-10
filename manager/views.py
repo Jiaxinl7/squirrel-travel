@@ -1,6 +1,6 @@
 from typing import Coroutine
 from django.db.models.aggregates import Count
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse, request
 from .models import City, Place, NRestaurant, Event
 from timeline.models import Visit, Dine
@@ -27,9 +27,9 @@ def search(request):
     # visit = Visit.objects.filter(date = date).order_by('start_time')
     # dine = Dine.objects.filter(date = date).order_by('start_time')
     visit = Visit.objects.select_related('pid').filter(date=date)
-    visit = [[v.start_time, v.end_time, v.pid.p_name, v.pid.location, v.vid, 'v'] for v in visit]
+    visit = [[v.start_time, v.end_time, v.pid.p_name, v.pid.location, v.vid, 1 ] for v in visit]
     dine = Dine.objects.select_related('rid').filter(date=date)
-    dine = [[d.start_time, d.end_time, d.rid.r_name, d.rid.r_address, d.did, 'd'] for d in dine]
+    dine = [[d.start_time, d.end_time, d.rid.r_name, d.rid.r_address, d.did, 0 ] for d in dine]
     destination = sorted(visit + dine)
     print(destination)
 
@@ -54,7 +54,7 @@ def place(request, pid):
         end_time = request.POST['end_time']
         user = User.objects.get(uid = request.session['user_id'])
         visit_instance = Visit.objects.create(uid = user, pid = place, date = date, start_time = start_time, end_time = end_time)
-        return render(request, 'manager/place.html', 
+        return render(request, 'manager/place.html',
         {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time})
 
     return render(request, 'manager/place.html', {'place': place, 'events': events})
@@ -92,7 +92,6 @@ def delete_visit(request, vid):
     # print(request)
 
     Visit.objects.filter(vid=vid).delete()
-
     return render(request, 'manager/index.html')
 
 def edit_visit(request,vid):
