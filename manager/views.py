@@ -35,7 +35,7 @@ def search(request):
 
     # dine = Dine.objects.select_related('rid').filter(date=date)
     with connection.cursor() as cursor:
-        cursor.execute("SELECT start_time, end_time, r_name, r_address, rid FROM dine JOIN n_restaurant on dine.rid = n_restaurant.id WHERE date = %s", [date])
+        cursor.execute("SELECT start_time, end_time, r_name, r_address, did FROM dine JOIN n_restaurant on dine.rid = n_restaurant.id WHERE date = %s", [date])
         dine = cursor.fetchall()
     dine = [[d[0], d[1], d[2], d[3], d[4], 0] for d in dine]
     
