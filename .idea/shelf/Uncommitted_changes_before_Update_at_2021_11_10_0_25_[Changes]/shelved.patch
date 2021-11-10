@@ -1,0 +1,124 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+new file mode 100644
+--- /dev/null	(date 1636513453249)
++++ b/.idea/workspace.xml	(date 1636513453249)
+@@ -0,0 +1,62 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="ChangeListManager">
++    <list default="true" id="9470686f-89fd-48bf-b679-107faecd3846" name="Changes" comment="">
++      <change afterPath="$PROJECT_DIR$/manager/templates/manager/edit_visit.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/SquirrelTravel/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/SquirrelTravel/urls.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/community/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/community/views.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/manager/templates/manager/display.html" beforeDir="false" afterPath="$PROJECT_DIR$/manager/templates/manager/display.html" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/manager/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/manager/urls.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/manager/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/manager/views.py" afterDir="false" />
++    </list>
++    <option name="SHOW_DIALOG" value="false" />
++    <option name="HIGHLIGHT_CONFLICTS" value="true" />
++    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
++    <option name="LAST_RESOLUTION" value="IGNORE" />
++  </component>
++  <component name="FileTemplateManagerImpl">
++    <option name="RECENT_TEMPLATES">
++      <list>
++        <option value="Python Script" />
++        <option value="HTML File" />
++      </list>
++    </option>
++  </component>
++  <component name="Git.Settings">
++    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
++  </component>
++  <component name="ProjectId" id="20bkb2DKqLVnN6beHHOjtIYk33m" />
++  <component name="ProjectViewState">
++    <option name="hideEmptyMiddlePackages" value="true" />
++    <option name="showLibraryContents" value="true" />
++  </component>
++  <component name="PropertiesComponent">
++    <property name="DefaultHtmlFileTemplate" value="HTML File" />
++    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
++    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
++    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
++  </component>
++  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
++  <component name="TaskManager">
++    <task active="true" id="Default" summary="Default task">
++      <changelist id="9470686f-89fd-48bf-b679-107faecd3846" name="Changes" comment="" />
++      <created>1636320742709</created>
++      <option name="number" value="Default" />
++      <option name="presentableId" value="Default" />
++      <updated>1636320742709</updated>
++    </task>
++    <servers />
++  </component>
++  <component name="Vcs.Log.Tabs.Properties">
++    <option name="TAB_STATES">
++      <map>
++        <entry key="MAIN">
++          <value>
++            <State />
++          </value>
++        </entry>
++      </map>
++    </option>
++    <option name="oldMeFiltersMigrated" value="true" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+new file mode 100644
+--- /dev/null	(date 1636426629990)
++++ b/.idea/vcs.xml	(date 1636426629990)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="VcsDirectoryMappings">
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+new file mode 100644
+--- /dev/null	(date 1636342912881)
++++ b/.idea/misc.xml	(date 1636342912881)
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<project version="4">
++  <component name="PyCharmProfessionalAdvertiser">
++    <option name="shown" value="true" />
++  </component>
++</project>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/profiles_settings.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/profiles_settings.xml b/.idea/inspectionProfiles/profiles_settings.xml
+new file mode 100644
+--- /dev/null	(date 1636428941896)
++++ b/.idea/inspectionProfiles/profiles_settings.xml	(date 1636428941896)
+@@ -0,0 +1,6 @@
++<component name="InspectionProjectProfileManager">
++  <settings>
++    <option name="USE_PROJECT_PROFILE" value="false" />
++    <version value="1.0" />
++  </settings>
++</component>
+\ No newline at end of file

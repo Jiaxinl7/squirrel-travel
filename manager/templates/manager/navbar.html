@@ -5,6 +5,9 @@
         <img src="{% static 'manager/logo.png' %}" alt="logo" height="24" class="d-inline-block align-text-top">
         <strong>Squirrle Travel</strong>
       </a>
+
+      <a href="http://127.0.0.1:8000/" class="btn btn-warning" role="button">Home</a>
+      <a href="http://127.0.0.1:8000/community/" class="btn btn-warning" role="button">Community</a>
       <div class="d-flex">
         {% if request.session.is_login %}
         <div class="dropdown">
