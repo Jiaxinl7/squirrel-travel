@@ -15,8 +15,16 @@
   <body>
     {% include 'manager/navbar.html' %}
     <div style="padding-top: 70px;" ></div>
-
+    
     <div class="container">
+    {% if mode %}
+    <strong>All My Plans</strong> 
+    <a type="button" class="btn btn-outline-warning" href="/manager/myplan/upcoming">Change to Upcoming Plans</a>
+    {% else %}
+    <strong>My Upcoming Plans</strong>
+    <a type="button" class="btn btn-outline-warning" href="/manager/myplan/all">Change to All Plans</a>
+    {% endif %}
+    <p></p>
     
           <!-- <div class="col-md-4"> -->
             <div class="row row-cols-1 row-cols-md-3 g-4">

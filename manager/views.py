@@ -5,6 +5,8 @@ from timeline.models import Visit, Dine
 from user.models import User
 from django.db import models, connection
 from django.db.models.aggregates import Avg, Count
+import datetime
+
 
 def index(request):
     # return HttpResponse("Here is the manager page.")
@@ -202,14 +204,17 @@ def edit_dine(request,did):
 
     return render(request, 'manager/edit_dine.html', {'restaurant': restaurant})
 
-def myplan(request):
+def myplan(request, mode):
     plans = {}
+    today = datetime.date.today()
     with connection.cursor() as cursor:
         cursor.execute("(SELECT DISTINCT date FROM visit NATURAL JOIN place WHERE uid = %s) UNION (SELECT DISTINCT date FROM dine NATURAL JOIN n_restaurant WHERE uid = %s) ORDER BY date", [request.session['user_id'], request.session['user_id']])
         date = cursor.fetchall()
         # print("Dates:", date)
 
         for da in date:
+            if mode=='upcoming' and da[0]<today:
+                continue
             cursor.execute("SELECT start_time, end_time, p_name, location, vid FROM visit NATURAL JOIN place WHERE date = %s AND uid = %s", [da, request.session['user_id']])
             visit = cursor.fetchall()
             visit = [[v[0], v[1], v[2], v[3], v[4], 1] for v in visit]
@@ -224,5 +229,5 @@ def myplan(request):
     # for d in date:
     #     print(d)
     #     print(plans[d[0]])
-    return render(request, 'manager/myplan.html', {'plans': plans})
+    return render(request, 'manager/myplan.html', {'plans': plans, 'mode': 1 if mode=='all' else 0})
 

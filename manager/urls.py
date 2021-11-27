@@ -14,6 +14,6 @@ urlpatterns = [
     path('search/edit_visit/<int:vid>/', views.edit_visit, name='edit_visit'),
     path('search/delete_dine/<int:did>/', views.delete_dine, name='delete_dine'),
     path('search/edit_dine/<int:did>/', views.edit_dine, name='edit_dine'),
-    path('myplan/', views.myplan, name='myplan')
+    path('myplan/<slug:mode>', views.myplan, name='myplan')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
