@@ -6,7 +6,6 @@ from user.models import User
 from django.db import models, connection
 from django.db.models.aggregates import Avg, Count
 
-
 def index(request):
     # return HttpResponse("Here is the manager page.")
     print('index page:')
@@ -28,14 +27,14 @@ def search(request):
 
     # visit = Visit.objects.select_related('pid').filter(date=date)
     with connection.cursor() as cursor:
-        cursor.execute("SELECT start_time, end_time, p_name, location, vid FROM visit NATURAL JOIN place WHERE date = %s", [date])
+        cursor.execute("SELECT start_time, end_time, p_name, location, vid FROM visit NATURAL JOIN place WHERE date = %s and uid = %s", [date, request.session['user_id']])
         visit = cursor.fetchall()
     visit = [[v[0], v[1], v[2], v[3], v[4], 1] for v in visit]
     print('len of visit:', len(visit))
 
     # dine = Dine.objects.select_related('rid').filter(date=date)
     with connection.cursor() as cursor:
-        cursor.execute("SELECT start_time, end_time, r_name, r_address, did FROM dine JOIN n_restaurant on dine.rid = n_restaurant.id WHERE date = %s", [date])
+        cursor.execute("SELECT start_time, end_time, r_name, r_address, did FROM dine JOIN n_restaurant on dine.rid = n_restaurant.id WHERE date = %s and uid = %s", [date, request.session['user_id']])
         dine = cursor.fetchall()
     dine = [[d[0], d[1], d[2], d[3], d[4], 0] for d in dine]
     
@@ -103,6 +102,7 @@ def restaurant(request, rid):
     print('restaurant page:')
     # restaurant = NRestaurant.objects.get(id = rid)
     restaurant = NRestaurant.objects.raw('SELECT * FROM n_restaurant WHERE id = %s', [rid])[0]
+
     # create dine
     if request.method == 'POST':
         date = request.POST['date']
@@ -130,17 +130,33 @@ def delete_visit(request, vid):
 
 def edit_visit(request,vid):
     visit = Visit.objects.filter(vid=vid).first()
+    with connection.cursor() as cursor:
+        cursor.execute("select p_name,location from place where pid = (select pid from visit where vid = %s)", [vid])
+        rst = cursor.fetchone()
+    place = {}
+    place['p_name'] = rst[0]
+    place['location'] = rst[1]
+    
     if request.method == 'POST':
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
+        public = 1 if 'public' in request.POST else 0
+        new_review = request.POST['review']
+        review = new_review if len(new_review) else visit.review
+        stars = request.POST['stars'] if 'stars' in request.POST else None
+        stars = stars if stars else visit.v_rate
+        trans = request.POST['trans']
+        spend = request.POST['spend']
+
         #user = User.objects.get(uid = request.session['user_id'])
         #Visit.objects.filter(vid=vid).update( date = date, start_time = start_time, end_time = end_time)
         with connection.cursor() as cursor:
-            cursor.execute("UPDATE visit SET date = %s , start_time=%s , end_time=%s WHERE vid = %s", [date, start_time, end_time, vid])
+            cursor.execute("UPDATE visit SET date = %s , start_time=%s , end_time=%s, public = %s, review = %s, v_rate=%s,transport_fee=%s, v_cost=%s  WHERE vid = %s", 
+            [date, start_time, end_time, public, review, stars,trans,spend, vid])
             cursor.fetchone()
         return render(request, 'manager/index.html')
-    return render(request, 'manager/edit_visit.html')
+    return render(request, 'manager/edit_visit.html', {'place':place})
 
 def delete_dine(request, did):
     # print(request)
@@ -153,13 +169,60 @@ def delete_dine(request, did):
 
 def edit_dine(request,did):
     dine = Dine.objects.filter(did=did).first()
+    with connection.cursor() as cursor:
+        cursor.execute("select r_name,r_address,categories,stars,review_count,hours from n_restaurant where id = (select rid from dine where did = %s)", [did])
+        rst = cursor.fetchone()
+    restaurant = {}
+    restaurant['r_name'] = rst[0]
+    restaurant['r_address'] = rst[1]
+    restaurant['categories'] = rst[2]
+    restaurant['stars'] = rst[3]
+    restaurant['review_count'] = rst[4]
+    restaurant['hours'] = rst[5]
+
+
     if request.method == 'POST':
         date = request.POST['date']
         start_time = request.POST['start_time']
         end_time = request.POST['end_time']
+        public = 1 if 'public' in request.POST else 0
+        new_review = request.POST['review']
+        review = new_review if len(new_review) else dine.review
+        new_order = request.POST['order']
+        order = new_order if len(new_order) else dine.orders
+        stars = request.POST['stars'] if 'stars' in request.POST else None
+        stars = stars if stars else dine.d_rate
+        spend = request.POST['spend']
+        # print('Stars:',stars)
         # Dine.objects.filter(did=did).update( date = date, start_time = start_time, end_time = end_time)
         with connection.cursor() as cursor:
-            cursor.execute("UPDATE dine SET date = %s , start_time=%s , end_time=%s WHERE did = %s", [date, start_time, end_time, did])
+            cursor.execute("UPDATE dine SET date = %s , start_time=%s , end_time=%s, public = %s, review = %s, orders = %s, d_rate=%s, d_cost = %s WHERE did = %s", [date, start_time, end_time, public,review, order, stars, spend,did])
             cursor.fetchone()
         return render(request, 'manager/index.html')
-    return render(request, 'manager/edit_dine.html')
+
+    return render(request, 'manager/edit_dine.html', {'restaurant': restaurant})
+
+def myplan(request):
+    plans = {}
+    with connection.cursor() as cursor:
+        cursor.execute("(SELECT DISTINCT date FROM visit NATURAL JOIN place WHERE uid = %s) UNION (SELECT DISTINCT date FROM dine NATURAL JOIN n_restaurant WHERE uid = %s) ORDER BY date", [request.session['user_id'], request.session['user_id']])
+        date = cursor.fetchall()
+        # print("Dates:", date)
+
+        for da in date:
+            cursor.execute("SELECT start_time, end_time, p_name, location, vid FROM visit NATURAL JOIN place WHERE date = %s AND uid = %s", [da, request.session['user_id']])
+            visit = cursor.fetchall()
+            visit = [[v[0], v[1], v[2], v[3], v[4], 1] for v in visit]
+
+            cursor.execute("SELECT start_time, end_time, r_name, r_address, did FROM dine JOIN n_restaurant on dine.rid = n_restaurant.id WHERE date = %s AND uid = %s", [da, request.session['user_id']])
+            dine = cursor.fetchall()
+            dine = [[d[0], d[1], d[2], d[3], d[4], 0] for d in dine]
+
+            destination = sorted(visit + dine)
+            plans[da[0]] = destination
+    # print('Plans:', plans)
+    # for d in date:
+    #     print(d)
+    #     print(plans[d[0]])
+    return render(request, 'manager/myplan.html', {'plans': plans})
+

@@ -67,7 +67,7 @@ body {
 }
 
 .vertical-timeline-element-icon .badge-dot-xl {
-    box-shadow: 0 0 0 5px #ff9900
+    box-shadow: 0 0 0 5px #fff
 }
 
 .badge-dot-xl {
@@ -123,3 +123,4 @@ body {
     display: table;
     clear: both
 }
+

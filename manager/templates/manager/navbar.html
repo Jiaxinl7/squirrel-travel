@@ -1,12 +1,12 @@
 <nav class="navbar fixed-top navbar-dark bg-dark shadow-sm">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">
+      <a class="navbar-brand" href="http://127.0.0.1:8000/">
         {% load static %}
         <img src="{% static 'manager/logo.png' %}" alt="logo" height="24" class="d-inline-block align-text-top">
         <strong>Squirrle Travel</strong>
       </a>
 
-      <a href="http://127.0.0.1:8000/" class="btn btn-warning" role="button">Home</a>
+      <!-- <a href="http://127.0.0.1:8000/" class="btn btn-warning" role="button">Home</a> -->
       <a href="http://127.0.0.1:8000/manager/recom/" class="btn btn-warning" role="button">Editor Choice</a>
       <a href="http://127.0.0.1:8000/community/" class="btn btn-warning" role="button">Community</a>
       <div class="d-flex">
@@ -16,7 +16,7 @@
                 Welcome, {{ request.session.user_name }}
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <a class="dropdown-item" href="#">My Plan</a>
+              <a class="dropdown-item" href="/manager/myplan/">My Plan</a>
               <a class="dropdown-item" href="/users/logout/">Log Out</a>
             </div>
         </div>

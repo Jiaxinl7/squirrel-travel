@@ -25,17 +25,17 @@
                       {% for  s, e, title, loc, id, type in destination %}
                       <div class="vertical-timeline-item vertical-timeline-element">
                         <div> <span class="vertical-timeline-element-icon bounce-in"> 
-                          <i class="badge badge-warning badge-dot badge-dot-xl "> </i> </span>
+                          <i class="badge badge-dot badge-dot-xl "> </i> </span>
                             <div class="vertical-timeline-element-content bounce-in">
                               <h4 class="timeline-title">{{title}}</h4>
                               <p>{{loc}}</p>               
                                 <span class="vertical-timeline-element-date">{{s}}<br>To {{e}}</span>
                                 {% if type %}
-                                <a href="edit_visit/{{id}}" class="btn btn-primary" role="button">Edit</a>
-                                <a href="delete_visit/{{id}}" class="btn btn-danger" role="button">X</a>
+                                <a href="edit_visit/{{id}}" class="btn btn-primary btn-sm" role="button">Edit</a>
+                                <a href="delete_visit/{{id}}" class="btn btn-danger btn-sm" role="button">X</a>
                                 {% else %}
-                                <a href="edit_dine/{{id}}" class="btn btn-primary" role="button">Edit</a>
-                                <a href="delete_dine/{{id}}" class="btn btn-danger" role="button">X</a>
+                                <a href="edit_dine/{{id}}" class="btn btn-primary btn-sm" role="button">Edit</a>
+                                <a href="delete_dine/{{id}}" class="btn btn-danger btn-sm" role="button">X</a>
                                 {% endif %}
                             </div>
                         </div>
