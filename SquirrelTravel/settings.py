@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'manager.apps.ManagerConfig',
     'timeline.apps.TimelineConfig',
     'community.apps.CommunityConfig',
+    'django_social_share',
 ]
 
 MIDDLEWARE = [
@@ -66,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.request',
             ],
         },
     },
