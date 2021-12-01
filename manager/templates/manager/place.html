@@ -50,14 +50,34 @@
                 Events:   
             {% for result in events %}
                 <a class="list-group-item list-group-item-action">
-                    <div class="d-flex w-100 justify-content-between">
-                        <h5 class="mb-1">{{result.title}}</h5>
-                    </div>
-                    <small class="text-muted">Date: {{result.start_date}}</small>
-                   
+                  <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{result.title}}</h5>
+                  </div>
+                  <small class="text-muted">Date: {{result.start_date}}
+                  </small>
+                  
                 </a>
+                {% if request.session.manager %}
+                <div class="row">
+                  <div class="column" style = 'flex: 50%;'>
+                    <a href="/manager/edit_event/{{result.eid}}">
+                    <button  class="btn btn-outline-warning btn-sm" role="button">Edit</button> 
+                    </a>
+                  </div>
+                  <div class="column" style = 'flex: 50%;'>
+                    <a href="/manager/delete_event/{{result.eid}}">
+                      <button  class="btn btn-outline-danger btn-sm" role="button">Delete</button> 
+                    </a>   
+                  </div>
+              </div>                            
+                {% endif %}
             {% endfor %}
             </ul>
+            {% if request.session.manager %}
+              <a href="/manager/add_event/{{pid}}">
+              <button  class="btn btn-outline-warning btn-sm" role="button">Add Event</button> 
+              </a>                                 
+            {% endif %}
         </div>    
         
       </div>

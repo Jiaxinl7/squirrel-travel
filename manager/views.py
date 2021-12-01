@@ -1,6 +1,7 @@
 from django.db.models.aggregates import Count
 from django.http.request import HttpRequest
 from django.http.response import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from .models import City, Place, NRestaurant, Event
 from timeline.models import Visit, Dine
@@ -77,7 +78,7 @@ def place(request, pid):
         return render(request, 'manager/place.html',
         {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time})
 
-    return render(request, 'manager/place.html', {'place': place, 'events': events})
+    return render(request, 'manager/place.html', {'place': place, 'events': events, 'pid': pid})
 
 
 
@@ -164,7 +165,6 @@ def edit_visit(request,vid):
             cursor.execute("UPDATE visit SET date = %s , start_time=%s , end_time=%s, public = %s, review = %s, v_rate=%s,transport_fee=%s, v_cost=%s  WHERE vid = %s", 
             [date, start_time, end_time, public, review, stars,trans,spend, vid])
             cursor.fetchone()
-        return render(request, 'manager/index.html')
     return render(request, 'manager/edit_visit.html', {'place':place})
 
 def delete_dine(request, did):
@@ -252,3 +252,37 @@ def myplan(request, mode):
     #     print(plans[d[0]])
     return render(request, 'manager/myplan.html', {'plans': plans, 'mode': 1 if mode=='all' else 0})
 
+def add_event(request, pid):
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute("INSERT INTO event (title, start_date, pid) VALUES (%s, %s, %s)",
+            [request.POST['title'],request.POST['date'], pid])
+        print('add successful!')
+        return HttpResponseRedirect('/manager/search/place/%s/' % pid)
+    return render(request,'manager/add_event.html')
+    
+def edit_event(request, eid):
+    with connection.cursor() as cursor:
+        cursor.execute("select title, start_date, pid from event where eid = %s", [eid])
+        rst = cursor.fetchone()
+    event = {}
+    event['title'] = rst[0]
+    event['start_date'] = rst[1]
+    event['pid'] = rst[2]
+
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE event SET title = %s, start_date = %s WHERE eid = %s",
+            [request.POST['title'],request.POST['date'],eid])
+        event['title'] = request.POST['title']
+        event['start_date'] = request.POST['date']
+
+    return render(request,'manager/edit_event.html', {'event': event})   
+
+def delete_event(request, eid):
+    with connection.cursor() as cursor:
+        cursor.execute("select pid from event where eid = %s", [eid])
+        pid = cursor.fetchone()
+    with connection.cursor() as cursor:
+        cursor.execute("DELETE FROM event WHERE eid= %s", [eid])
+    return HttpResponseRedirect('/manager/search/place/%s/' % pid)
