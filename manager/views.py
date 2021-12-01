@@ -151,6 +151,8 @@ def edit_visit(request,vid):
         trans = request.POST['trans']
         spend = request.POST['spend']
 
+        
+
         #user = User.objects.get(uid = request.session['user_id'])
         #Visit.objects.filter(vid=vid).update( date = date, start_time = start_time, end_time = end_time)
         with connection.cursor() as cursor:
@@ -192,13 +194,27 @@ def edit_dine(request,did):
         review = new_review if len(new_review) else dine.review
         new_order = request.POST['order']
         order = new_order if len(new_order) else dine.orders
-        stars = request.POST['stars'] if 'stars' in request.POST else None
+        stars = int(request.POST['stars']) if 'stars' in request.POST else None
         stars = stars if stars else dine.d_rate
         spend = request.POST['spend']
         # print('Stars:',stars)
         # Dine.objects.filter(did=did).update( date = date, start_time = start_time, end_time = end_time)
+        new_rate = restaurant['stars']*restaurant['review_count']
+        # print(new_rate)
+        if 'stars' in request.POST:
+            new_rate += int(request.POST['stars'])
+            if dine.d_rate:
+                new_rate -= dine.d_rate
+            else:
+                restaurant['review_count'] +=1
+        new_rate /= restaurant['review_count']
+        
         with connection.cursor() as cursor:
-            cursor.execute("UPDATE dine SET date = %s , start_time=%s , end_time=%s, public = %s, review = %s, orders = %s, d_rate=%s, d_cost = %s WHERE did = %s", [date, start_time, end_time, public,review, order, stars, spend,did])
+            cursor.execute("UPDATE dine SET date = %s , start_time=%s , end_time=%s, public = %s, review = %s, orders = %s, d_rate=%s, d_cost = %s WHERE did = %s", 
+            [date, start_time, end_time, public,review, order, stars, spend,did])
+            cursor.fetchone()
+            cursor.execute("UPDATE n_restaurant SET stars=%s, review_count=%s WHERE id = (select rid from dine where did = %s)", 
+            [new_rate, restaurant['review_count'], did])
             cursor.fetchone()
         return render(request, 'manager/index.html')
 
