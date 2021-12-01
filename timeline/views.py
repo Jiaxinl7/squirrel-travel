@@ -11,7 +11,6 @@ from django.db.models.aggregates import Avg, Count
 
 
 def profile(request, uid):
-    
     # Count the places (the user v.s avg(all users)) have been to 
     with connection.cursor() as cursor:
          cursor.execute('SELECT COUNT(*) FROM visit WHERE uid = %s', [request.session['user_id']])
@@ -43,10 +42,11 @@ def profile(request, uid):
                               FROM (SELECT uid,COUNT(did) OVER (PARTITION BY uid) AS ud_cnt FROM dine) as t) as q\
                               WHERE q.uid=%s', [request.session['user_id']])
          rancr = cursor.fetchone()
+    
 
     # Radar Plot(Which categories does the user go to)
     menu = ["Arts", "Restaurant", "Shopping", "Health", "Sport", "Service"]
-    plans = []
+    spend = []
     for m in menu:
        with connection.cursor() as cursor:
             cursor.execute('SELECT COUNT(d.did) \
@@ -55,9 +55,9 @@ def profile(request, uid):
                             GROUP BY d.uid', ['%'+m+'%', request.session['user_id']])                
             temp = cursor.fetchone()
             temptt = temp[0] if temp is not None else 0
-            plans.append(temptt)
-            s = int(0 if sum(plans) is None else sum(plans))
-            plans = [round(e/s, 2) for e in plans] if s != 0 else [0]*6
+            spend.append(temptt)
+            s = int(0 if sum(spend) is None else sum(spend))
+            spend = [round(e/s, 2) for e in spend] if s != 0 else [0]*6
 
 
     # Expenses user v.s all 
@@ -76,7 +76,6 @@ def profile(request, uid):
          cursor.execute('SELECT ROUND(AVG(per),2) FROM (SELECT uid, SUM(d_cost) as per FROM dine GROUP BY uid) as t')
          adspend = cursor.fetchone()[0]
     ud_type = 1 if udspend > adspend else 0
-  
 
     # Kind Grader or...
     with connection.cursor() as cursor:
@@ -88,5 +87,8 @@ def profile(request, uid):
          abox = cursor.fetchone()
     g_type = 0 if abox[0]==0 else 1 if abox[1]>abox[0] else 2
 
-    return render(request, 'timeline/profile.html', {'uvcnt': uvcnt})
+    return render(request, 'timeline/profile.html', 
+                  {'uvcnt': uvcnt, 'avcnt': avcnt, 'rancp': rancp, 'udcnt': udcnt, 'adcnt': adcnt, 
+                  'rancp': rancr, 'spend': spend, 'g_type': g_type})
+
 
