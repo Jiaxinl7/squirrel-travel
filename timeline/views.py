@@ -14,10 +14,13 @@ def profile(request, uid):
     # Count the places (the user v.s avg(all users)) have been to 
     with connection.cursor() as cursor:
          cursor.execute('SELECT COUNT(*) FROM visit WHERE uid = %s', [request.session['user_id']])
-         uvcnt = cursor.fetchone()
+         box1 = cursor.fetchone()
+         uvcnt = box1[0] if box1 is not None else 0
+ 
     with connection.cursor() as cursor:
          cursor.execute('SELECT ROUND(avg(per),2) FROM (SELECT uid, COUNT(vid) as per FROM visit GROUP BY uid) as t')
-         avcnt = cursor.fetchone()
+         box2 = cursor.fetchone()
+         avcnt = box2[0] if box2 is not None else 0
 
     # The competence of the user(places)
     with connection.cursor() as cursor:
@@ -25,15 +28,19 @@ def profile(request, uid):
                         FROM (SELECT uid, CUME_DIST() OVER (ORDER BY ud_cnt) AS arank \
                               FROM (SELECT uid,COUNT(pid) OVER (PARTITION BY uid) AS ud_cnt FROM visit) as t) as q\
                               WHERE q.uid=%s', [request.session['user_id']])
-         rancp = cursor.fetchone()
+         box3 = cursor.fetchone()
+         rancp = box3[0] if box3 is not None else 0
 
     # Count the restaurants (the user v.s avg(all users)) have dined 
     with connection.cursor() as cursor:
          cursor.execute('SELECT COUNT(did) FROM dine WHERE uid = %s', [request.session['user_id']])
-         udcnt = cursor.fetchone()
+         box4 = cursor.fetchone()
+         udcnt = box4[0] if box4 is not None else 0
+
     with connection.cursor() as cursor:
          cursor.execute('SELECT ROUND(avg(per),2) FROM (SELECT uid, COUNT(did) as per FROM dine GROUP BY uid) as t')
-         adcnt = cursor.fetchone()
+         box5 = cursor.fetchone()
+         adcnt = box5[0] if box5 is not None else 0
 
     # The competence of the user(restaurants)
     with connection.cursor() as cursor:
@@ -41,8 +48,8 @@ def profile(request, uid):
                         FROM (SELECT uid, CUME_DIST() OVER (ORDER BY ud_cnt) AS arank \
                               FROM (SELECT uid,COUNT(did) OVER (PARTITION BY uid) AS ud_cnt FROM dine) as t) as q\
                               WHERE q.uid=%s', [request.session['user_id']])
-         rancr = cursor.fetchone()
-    
+         box6 = cursor.fetchone()
+         rancr = box6[0] if box6 is not None else 0   
 
     # Radar Plot(Which categories does the user go to)
     menu = ["Arts", "Restaurant", "Shopping", "Health", "Sport", "Service"]
@@ -87,8 +94,11 @@ def profile(request, uid):
          abox = cursor.fetchone()
     g_type = 0 if abox[0]==0 else 1 if abox[1]>abox[0] else 2
 
+    with connection.cursor() as cursor:
+         cursor.execute('SELECT u_name FROM user WHERE uid=%s',[request.session['user_id']])
+         u = cursor.fetchone()[0]
     return render(request, 'timeline/profile.html', 
                   {'uvcnt': uvcnt, 'avcnt': avcnt, 'rancp': rancp, 'udcnt': udcnt, 'adcnt': adcnt, 
-                  'rancp': rancr, 'spend': spend, 'g_type': g_type})
+                  'rancr': rancr, 'spend': spend, 'g_type': g_type, 'u':u})
 
 
