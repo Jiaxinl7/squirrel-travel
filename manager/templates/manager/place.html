@@ -42,6 +42,20 @@
                 
                 </form>
             </div>
+            <br>
+            <p>People went here also went to...</p>
+            <ul class="list-group">   
+              {% for rt, rs in recm %}
+              <a class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{rt}}</h5>
+                </div>
+                <small class="text-muted">People's view: {{rs}}
+                </small>
+                
+              </a>
+              {% endfor %}
+            </ul>
             
            
         </div>

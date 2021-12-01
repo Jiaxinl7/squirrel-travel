@@ -62,7 +62,15 @@ def place(request, pid):
     place = Place.objects.raw('SELECT * FROM place WHERE pid=%s',[pid])[0]
     # events = Event.objects.filter(pid = pid).order_by('start_date')
     events = Event.objects.raw('SELECT * FROM event WHERE pid=%s', [pid])
-    print(place.p_name,' event:', len(events))
+    # print(place.p_name,' event:', len(events))
+
+    # recommend
+    with connection.cursor() as cursor:
+        cursor.execute("call Result (%s)", [place.p_name])
+        recm = cursor.fetchall()
+        print('recm:', recm)
+
+
     # create visit
     if request.method == 'POST':
         date = request.POST['date']
@@ -76,9 +84,9 @@ def place(request, pid):
             cursor.execute("INSERT INTO Visit (uid, pid, date, start_time, end_time) VALUES (%s, %s, %s, %s, %s)", [user.uid ,place.pid, date, start_time, end_time])
   
         return render(request, 'manager/place.html',
-        {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time})
+        {'place': place, 'events': events, 'date': date, 'start_time': start_time, 'end_time': end_time, 'recm':recm})
 
-    return render(request, 'manager/place.html', {'place': place, 'events': events, 'pid': pid})
+    return render(request, 'manager/place.html', {'place': place, 'events': events, 'pid': pid,'recm':recm})
 
 
 
