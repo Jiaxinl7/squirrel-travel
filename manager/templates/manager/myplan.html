@@ -59,7 +59,6 @@
                     </div>
                     {% load social_share %}
                     {% post_to_twitter "I had a nice day in Boston on {{d|date:'Y-m-d'}}. What a wonderful trip! Come on and plan your trip in Squirrel Travel! " "http://127.0.0.1:8000/" "Post to Twitter!" %}
-                    {% post_to_linkedin  "I had a nice day in Boston on {{d|date:'Y-m-d'}}. What a wonderful trip! Come on and plan your trip in Squirrel Travel! "%}
                     {% send_email object.title "I had a nice day in Boston on {{d|date:'Y-m-d'}}. What a wonderful trip! Come on and plan your trip in Squirrel Travel! " "http://127.0.0.1:8000/" "Share via email" %}
                     {% post_to_reddit "I had a nice day in Boston on {{d|date:'Y-m-d'}}. What a wonderful trip! Come on and plan your trip in Squirrel Travel! " "http://127.0.0.1:8000/" %}
                     {% post_to_whatsapp "http://127.0.0.1:8000/" "Share via WhatsApp" %}
