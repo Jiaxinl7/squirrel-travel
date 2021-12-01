@@ -1,4 +1,6 @@
 from django.db.models.aggregates import Count
+from django.http.request import HttpRequest
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from .models import City, Place, NRestaurant, Event
 from timeline.models import Visit, Dine
@@ -83,20 +85,23 @@ def recommend(request):
     # Treasure restaurants you may not find yet
     #rec_list = NRestaurant.objects.values('categories').annotate(avgcount=Avg('review_count')).filter(review_count__lte=F('avgcount'),stars__gte=4).values('categories','r_name','r_address')[:15]
     
+    rec_list = {}
     with connection.cursor() as cursor:
-         cursor.execute("SELECT r.r_name FROM n_restaurant r NATURAL JOIN (SELECT categories, avg(review_count) as count FROM n_restaurant GROUP BY categories) AS t WHERE r.stars >= 4 AND r.review_count <= t.count LIMIT 15")
-         rec_list = cursor.fetchall()
-
+         cursor.execute("SELECT r.r_name FROM n_restaurant r NATURAL JOIN (SELECT categories, avg(review_count) as count FROM n_restaurant GROUP BY categories) AS t WHERE r.stars >= 4 AND r.review_count <= t.count LIMIT 8")
+         tup = cursor.fetchall()
+         rec_list = [t[0] for t in tup]
+    
 
     # Cities that hold lots of events recently
     # queryset = Place.objects.select_related('event', 'city').values('cid').annotate(c=Count('event')).order_by('-c')[:15]
     # cnames = City.objects.filter(cid__in=[queryset[i]['cid'] for i in range(len(queryset))]).values('c_name')
    
     with connection.cursor() as acursor: 
-         acursor.execute("SELECT c.c_name FROM city c, (SELECT p.cid as cid, COUNT(e.eid) as amount FROM event e NATURAL JOIN place p GROUP BY p.cid ORDER BY amount DESC) as t WHERE c.cid=t.cid LIMIT 15")
-         cnames = acursor.fetchall()
+         acursor.execute("SELECT c.c_name FROM city c, (SELECT p.cid as cid, COUNT(e.eid) as amount FROM event e NATURAL JOIN place p GROUP BY p.cid ORDER BY amount DESC) as t WHERE c.cid=t.cid LIMIT 8")
+         tup2 = acursor.fetchall()
+         cnames = [t[0] for t in tup2]
 
-    return render(request, 'manager/advancedquery.html', {'rec_list': rec_list, 'cnames': cnames})
+    return render(request, 'timeline/recommend.html', {'rec_list': rec_list, 'cnames': cnames})
 
 
 

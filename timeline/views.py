@@ -22,11 +22,11 @@ def profile(request, uid):
 
     # The competence of the user(places)
     with connection.cursor() as cursor:
-        cursor.execute('SELECT DISTINCT q.arank \
+         cursor.execute('SELECT DISTINCT q.arank \
                         FROM (SELECT uid, CUME_DIST() OVER (ORDER BY ud_cnt) AS arank \
                               FROM (SELECT uid,COUNT(pid) OVER (PARTITION BY uid) AS ud_cnt FROM visit) as t) as q\
                               WHERE q.uid=%s', [request.session['user_id']])
-        rancp = cursor.fetchone()
+         rancp = cursor.fetchone()
 
     # Count the restaurants (the user v.s avg(all users)) have dined 
     with connection.cursor() as cursor:
