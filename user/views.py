@@ -12,7 +12,7 @@ def index(request):
 
 def login(request):
     if request.session.get('is_login',None):
-        return redirect('/users/index')
+        return redirect('/manager/')
  
     if request.method == "POST":
         login_form = UserForm(request.POST)
@@ -30,7 +30,7 @@ def login(request):
                         request.session['manager'] = True
                     else:
                         request.session['manager'] = False
-                    return redirect('/users/index/')
+                    return redirect('/manager/')
 
                 else:
                     message = "Wrong password!"
@@ -45,7 +45,7 @@ def login(request):
 def register(request):
     if request.session.get('is_login', None):
         # 登录状态不允许注册。你可以修改这条原则！
-        return redirect("/users/index/")
+        return redirect("/manager/")
     if request.method == "POST":
         register_form = RegisterForm(request.POST)
         message = "Pleace check your input!"
@@ -86,10 +86,10 @@ def register(request):
 def logout(request):
     if not request.session.get('is_login', None):
         # 如果本来就未登录，也就没有登出一说
-        return redirect("/users/index/")
+        return redirect("/manager/")
     request.session.flush()
     # 或者使用下面的方法
     # del request.session['is_login']
     # del request.session['user_id']
     # del request.session['user_name']
-    return redirect("/users/index/")
+    return redirect("/manager/")

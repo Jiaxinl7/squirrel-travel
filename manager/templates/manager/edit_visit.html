@@ -39,13 +39,13 @@
                     <input type="time" name="end_time" class="form-control"/>
 
                     <label for="review">Review:</label>
-                    <input type="text" name="review" class="form-control"/>
+                    <input type="text" name="review" class="form-control" value = {{visit.review}}/>
 
-                    <label for="trans">Spend:</label>
-                    <input type="number" name="trans" min="0" value="0" class="form-control"/>
+                    <label for="trans">Transportation:</label>
+                    <input type="number" name="trans" min="0" value={{visit.transport_fee}} class="form-control"/>
                     
                     <label for="spend">Spend:</label>
-                    <input type="number" name="spend" min="0" value="0" class="form-control"/>
+                    <input type="number" name="spend" min="0" value={{visit.v_rate}} class="form-control"/>
 
                     <label for="public">Public:</label>
                     <input type="checkbox" name="public" checked="" />

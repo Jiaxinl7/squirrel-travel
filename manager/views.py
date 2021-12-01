@@ -165,7 +165,7 @@ def edit_visit(request,vid):
             cursor.execute("UPDATE visit SET date = %s , start_time=%s , end_time=%s, public = %s, review = %s, v_rate=%s,transport_fee=%s, v_cost=%s  WHERE vid = %s", 
             [date, start_time, end_time, public, review, stars,trans,spend, vid])
             cursor.fetchone()
-    return render(request, 'manager/edit_visit.html', {'place':place})
+    return render(request, 'manager/edit_visit.html', {'place':place, 'visit':visit})
 
 def delete_dine(request, did):
     # print(request)
