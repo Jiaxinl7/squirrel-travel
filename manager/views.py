@@ -247,3 +247,23 @@ def myplan(request, mode):
     #     print(plans[d[0]])
     return render(request, 'manager/myplan.html', {'plans': plans, 'mode': 1 if mode=='all' else 0})
 
+def add_event(request):
+    return render(request,'manager/add_event.html')
+    
+def edit_event(request, eid):
+    with connection.cursor() as cursor:
+        cursor.execute("select title, start_date, pid from event where eid = %s", [eid])
+        rst = cursor.fetchone()
+    event = {}
+    event['title'] = rst[0]
+    event['start_date'] = rst[1]
+    event['pid'] = rst[2]
+
+    if request.method == 'POST':
+        with connection.cursor() as cursor:
+            cursor.execute("UPDATE event SET title = %s, start_date = %s WHERE eid = %s",
+            [request.POST['title'],request.POST['date'],eid])
+        event['title'] = request.POST['title']
+        event['start_date'] = request.POST['date']
+
+    return render(request,'manager/edit_event.html', {'event': event})   

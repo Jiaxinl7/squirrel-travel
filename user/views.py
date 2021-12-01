@@ -26,6 +26,10 @@ def login(request):
                     request.session['is_login'] = True
                     request.session['user_id'] = user.uid
                     request.session['user_name'] = user.u_name
+                    if user.user_type == 'Manager':
+                        request.session['manager'] = True
+                    else:
+                        request.session['manager'] = False
                     return redirect('/users/index/')
 
                 else:

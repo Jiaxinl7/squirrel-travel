@@ -52,9 +52,15 @@
                     <div class="d-flex w-100 justify-content-between">
                         <h5 class="mb-1">{{result.title}}</h5>
                     </div>
-                    <small class="text-muted">Date: {{result.start_date}}</small>
-                   
-                </a>
+                    <small class="text-muted">Date: {{result.start_date}}
+                    </small>
+                    
+                  </a>
+                  {% if request.session.manager %}
+                  <a href="/manager/edit_event/{{result.eid}}">
+                  <button  class="btn btn-outline-warning btn-sm" role="button">Edit</button> 
+                  </a>                               
+                  {% endif %}
             {% endfor %}
             </ul>
         </div>    
